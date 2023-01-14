@@ -1,0 +1,13 @@
+using (var command = _context.Database.GetDbConnection().CreateCommand())
+{
+    command.CommandText = "SearchCustomers";
+    command.CommandType = CommandType.StoredProcedure;
+
+    var sortColumn = new SqlParameter("@sortColumn", SqlDbType.NVarChar, 50) { Value = sortBy };
+    command.Parameters.Add(sortColumn);
+
+    var sortDirection = new SqlParameter("@sortDirection", SqlDbType.NVarChar, 4) { Value = sortDirection };
+    command.Parameters.Add(sortDirection);
+
+    var searchTerm = new SqlParameter("@searchTerm", SqlDbType.NVarChar, 50) { Value = search };
+    command.
