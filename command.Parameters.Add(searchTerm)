@@ -1,0 +1,24 @@
+var pageNumber = new SqlParameter("@pageNumber", SqlDbType.Int) { Value = page };
+command.Parameters.Add(pageNumber);
+
+var pageSize = new SqlParameter("@pageSize", SqlDbType.Int) { Value = pageSize };
+command.Parameters.Add(pageSize);
+
+_context.Database.OpenConnection();
+
+using (var reader = await command.ExecuteReaderAsync())
+{
+    var customers = new List<Customer>();
+    while (await reader.ReadAsync())
+    {
+        customers.Add(new Customer
+        {
+            Id = reader.GetInt32(0),
+            Name = reader.GetString(1),
+            CompanyName = reader.GetString(2),
+            Phone = reader.GetString(3),
+            Email = reader.GetString(4)
+        });
+    }
+    return customers;
+}
