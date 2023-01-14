@@ -1,0 +1,30 @@
+CREATE PROCEDURE SearchCustomers
+    @sortColumn NVARCHAR(50),
+    @sortDirection NVARCHAR(4),
+    @searchTerm NVARCHAR(50),
+    @pageNumber INT,
+    @pageSize INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        *
+    FROM 
+        Customers
+    WHERE 
+        (Name LIKE '%' + @searchTerm + '%' OR
+         CompanyName LIKE '%' + @searchTerm + '%' OR
+         Phone LIKE '%' + @searchTerm + '%' OR
+         Email LIKE '%' + @searchTerm + '%')
+    ORDER BY 
+        CASE WHEN @sortColumn = 'Name' AND @sortDirection = 'ASC' THEN Name END ASC,
+        CASE WHEN @sortColumn = 'Name' AND @sortDirection = 'DESC' THEN Name END DESC,
+        CASE WHEN @sortColumn = 'CompanyName' AND @sortDirection = 'ASC' THEN CompanyName END ASC,
+        CASE WHEN @sortColumn = 'CompanyName' AND @sortDirection = 'DESC' THEN CompanyName END DESC,
+        CASE WHEN @sortColumn = 'Phone' AND @sortDirection = 'ASC' THEN Phone END ASC,
+        CASE WHEN @sortColumn = 'Phone' AND @sortDirection = 'DESC' THEN Phone END DESC,
+        CASE WHEN @sortColumn = 'Email' AND @sortDirection = 'ASC' THEN Email END ASC,
+        CASE WHEN @sortColumn = 'Email' AND @sortDirection = 'DESC' THEN Email END DESC
+    OFFSET (@pageNumber - 1) * @pageSize ROWS
+    FETCH NEXT @pageSize ROWS ONLY;
+END
